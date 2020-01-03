@@ -38,7 +38,8 @@ public struct MessageFlag: OptionSet {
     public static let forwarded        = MessageFlag(rawValue: 1 << 6)
     public static let submitPending    = MessageFlag(rawValue: 1 << 7)
     public static let submitted        = MessageFlag(rawValue: 1 << 8)
-    public static let all: MessageFlag = [ .seen, .answered, .flagged, .deleted, .draft, .MDNSent, .forwarded, .submitPending, .submitted ]
+    public static let archived         = MessageFlag(rawValue: 1 << 9)
+    public static let all: MessageFlag = [ .seen, .answered, .flagged, .deleted, .draft, .MDNSent, .forwarded, .submitPending, .submitted, .archived ]
 }
 
 extension MessageFlag: CustomStringConvertible {
@@ -53,6 +54,7 @@ extension MessageFlag: CustomStringConvertible {
             (.forwarded,        "forwarded"),
             (.submitPending,    "submitPending"),
             (.submitted,        "submitted"),
+            (.archived,        "archived"),
             ]
         return representation(flags)
     }
