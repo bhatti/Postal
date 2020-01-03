@@ -16,7 +16,7 @@ xcode_project="libetpan.xcodeproj"
 
 embedded_deps="libsasl-ios"
 
-# prepare vars 
+# prepare vars
 name="libetpan"
 ios_library="libetpan-ios.a"
 ios_simarchs="i386 x86_64"
