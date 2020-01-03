@@ -30,6 +30,11 @@ extension IMAPSession {
         try select("INBOX")
         try mailimap_delete(imap, folderName).toIMAPError?.check()
     }
+
+    func expunge() throws {
+        try select("INBOX")
+        try mailimap_expunge(imap).toIMAPError?.check()
+    }
     
     func create(folderNamed folderName: String) throws {
         try select("INBOX")

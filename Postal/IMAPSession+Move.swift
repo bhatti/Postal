@@ -47,11 +47,23 @@ extension IMAPSession {
             } else {
                 result = [:]
             }
-
+            
             if srcUid != nil { mailimap_set_free(srcUid) }
             if destUid != nil { mailimap_set_free(destUid) }
             
             return combined.union(result)
         }
     }
+    
+    func expungeMessages(uids: IndexSet) throws {
+        guard uids.count > 0 else { return }
+        
+        try select("INBOX")
+        
+        let imapSet = uids.unreleasedMailimapSet
+        defer { mailimap_set_free(imapSet) }
+        
+        try mailimap_uid_expunge(imap, imapSet).toIMAPError?.check()
+    }
+    
 }
