@@ -262,7 +262,7 @@ public extension Postal {
         }, completion: completion)
     }
     
-    /// Delete messages from INBOX
+    /// Expunge messages from INBOX
     ///
     /// - parameters:
     ///     - uids: The message uids to be deleted.
@@ -272,6 +272,19 @@ public extension Postal {
             try self.session.expungeMessages(uids: uids)
         }, completion: completion)
     }
+    
+    /// Delete messages from INBOX
+      ///
+      /// - parameters:
+      ///     - uids: The message uids to be deleted.
+      ///     - completion: The completion handler when the request is finished with or without an error.
+      func deleteMessages(uids: IndexSet, completion: @escaping (Result<Void, PostalError>) -> Void) {
+          doAsync({
+            try self.session.deleteMessages(uids: uids)
+            try self.session.expunge()
+          }, completion: completion)
+      }
+    
 }
 
 // MARK: - Privates

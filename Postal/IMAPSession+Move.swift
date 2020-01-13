@@ -66,4 +66,27 @@ extension IMAPSession {
         try mailimap_uid_expunge(imap, imapSet).toIMAPError?.check()
     }
     
+    func deleteMessages(uids: IndexSet) throws {
+        guard uids.count > 0 else { return }
+        
+        try select("INBOX")
+        
+        let imapSet = uids.unreleasedMailimapSet
+
+        let flagList = mailimap_flag_list_new_empty()
+
+        let deletedFlag = mailimap_flag_new_deleted()
+        
+        try mailimap_flag_list_add(flagList, deletedFlag).toIMAPError?.check()
+
+        let flags = mailimap_store_att_flags_new(1, 0, flagList)
+                
+        defer {
+            mailimap_flag_list_free(flagList)
+            mailimap_set_free(imapSet)
+        }
+
+        try mailimap_uid_store(imap, imapSet, flags).toIMAPError?.check()
+    }
+    
 }
