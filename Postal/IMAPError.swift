@@ -26,7 +26,7 @@ import Foundation
 import libetpan
 
 enum IMAPError {
-    case undefined
+    case undefined(errorCode: Int)
     case connection
     case login(description: String)
     case parse
@@ -62,7 +62,7 @@ extension Int {
         case MAILIMAP_NO_ERROR, MAILIMAP_NO_ERROR_AUTHENTICATED, MAILIMAP_NO_ERROR_NON_AUTHENTICATED: return nil
         case MAILIMAP_ERROR_STREAM: return .connection
         case MAILIMAP_ERROR_PARSE: return .parse
-        default: return .undefined
+        default: return .undefined(errorCode: self)
         }
     }
 }

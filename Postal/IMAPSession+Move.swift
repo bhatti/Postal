@@ -83,6 +83,8 @@ extension IMAPSession {
                 
         defer {
             mailimap_flag_list_free(flagList)
+            //mailimap_store_att_flags_free(flags)
+            //mailimap_flag_free(deletedFlag)
             mailimap_set_free(imapSet)
         }
 
