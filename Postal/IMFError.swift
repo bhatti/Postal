@@ -26,13 +26,13 @@ import Foundation
 import libetpan
 
 enum IMFError {
-    case undefined
+    case undefined(errorCode: String)
 }
 
 extension IMFError: PostalErrorType {
     var asPostalError: PostalError {
         switch self {
-        case .undefined: return .undefined
+        case .undefined(let errorCode): return .undefined(errorCode: errorCode)
         }
     }
 }
@@ -41,7 +41,7 @@ extension Int {
     var toIMFError: IMFError? {
         switch self {
         case MAILIMF_NO_ERROR: return nil
-        default: return .undefined
+        default: return .undefined(errorCode: "Error code \(self)")
         }
     }
 }

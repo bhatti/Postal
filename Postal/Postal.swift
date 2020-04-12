@@ -30,6 +30,8 @@ open class Postal {
     fileprivate let queue: OperationQueue
     fileprivate let configuration: Configuration
 
+    public static var DEFAULT_INBOX = "INBOX"
+    
     /// Setting this variable will allow user to access to the internal logger.
     open var logger: Logger? {
         set { session.logger = newValue }
@@ -300,7 +302,7 @@ private extension Postal {
             } catch let error as PostalError {
                 result = .failure(error)
             } catch {
-                result = .failure(.undefined)
+                result = .failure(.undefined(errorCode: "Error \(error)"))
             }
             DispatchQueue.main.async {
                 completion(result)

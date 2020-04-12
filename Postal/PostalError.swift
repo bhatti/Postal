@@ -25,7 +25,7 @@
 import Foundation
 
 public enum PostalError: Error {
-    case undefined
+    case undefined(errorCode: String)
     case connection
     case login(description: String)
     case parse

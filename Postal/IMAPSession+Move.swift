@@ -58,7 +58,7 @@ extension IMAPSession {
     func expungeMessages(uids: IndexSet) throws {
         guard uids.count > 0 else { return }
         
-        try select("INBOX")
+        try select(Postal.DEFAULT_INBOX)
         
         let imapSet = uids.unreleasedMailimapSet
         defer { mailimap_set_free(imapSet) }
@@ -69,7 +69,7 @@ extension IMAPSession {
     func deleteMessages(uids: IndexSet) throws {
         guard uids.count > 0 else { return }
         
-        try select("INBOX")
+        try select(Postal.DEFAULT_INBOX)
         
         let imapSet = uids.unreleasedMailimapSet
 

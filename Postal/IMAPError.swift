@@ -26,7 +26,7 @@ import Foundation
 import libetpan
 
 enum IMAPError {
-    case undefined(errorCode: Int)
+    case undefined(errorCode: String)
     case connection
     case login(description: String)
     case parse
@@ -37,7 +37,7 @@ enum IMAPError {
 extension IMAPError: PostalErrorType {
     var asPostalError: PostalError {
         switch self {
-        case .undefined: return .undefined
+        case .undefined(let errorCode): return .undefined(errorCode: errorCode)
         case .connection: return .connection
         case .login(let description): return .login(description: description)
         case .parse: return .parse
@@ -62,7 +62,7 @@ extension Int {
         case MAILIMAP_NO_ERROR, MAILIMAP_NO_ERROR_AUTHENTICATED, MAILIMAP_NO_ERROR_NON_AUTHENTICATED: return nil
         case MAILIMAP_ERROR_STREAM: return .connection
         case MAILIMAP_ERROR_PARSE: return .parse
-        default: return .undefined(errorCode: self)
+        default: return .undefined(errorCode: "Error code \(self)")
         }
     }
 }
