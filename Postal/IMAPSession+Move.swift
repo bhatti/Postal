@@ -66,7 +66,7 @@ extension IMAPSession {
         try mailimap_uid_expunge(imap, imapSet).toIMAPError?.check()
     }
     
-    func deleteMessages(uids: IndexSet) throws {
+    func flagMessages(uids: IndexSet, flag: MessageFlag) throws {
         guard uids.count > 0 else { return }
         
         try select(Postal.DEFAULT_INBOX)
@@ -74,10 +74,25 @@ extension IMAPSession {
         let imapSet = uids.unreleasedMailimapSet
 
         let flagList = mailimap_flag_list_new_empty()
-
-        let deletedFlag = mailimap_flag_new_deleted()
         
-        try mailimap_flag_list_add(flagList, deletedFlag).toIMAPError?.check()
+        switch flag {
+        case .answered:
+            break
+        case .deleted:
+            try mailimap_flag_list_add(flagList, mailimap_flag_new_deleted()).toIMAPError?.check()
+            break
+        case .flagged:
+            try mailimap_flag_list_add(flagList, mailimap_flag_new_flagged()).toIMAPError?.check()
+            break
+        case .answered:
+            try mailimap_flag_list_add(flagList, mailimap_flag_new_answered()).toIMAPError?.check()
+            break
+        case .seen:
+            try mailimap_flag_list_add(flagList, mailimap_flag_new_seen()).toIMAPError?.check()
+            break
+        default:
+            return
+        }
 
         let flags = mailimap_store_att_flags_new(1, 0, flagList)
                 
@@ -90,5 +105,5 @@ extension IMAPSession {
 
         try mailimap_uid_store(imap, imapSet, flags).toIMAPError?.check()
     }
-    
+
 }

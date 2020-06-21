@@ -29,7 +29,7 @@ open class Postal {
     fileprivate let session: IMAPSession
     fileprivate let queue: OperationQueue
     fileprivate let configuration: Configuration
-
+    
     public static var DEFAULT_INBOX = "INBOX"
     
     /// Setting this variable will allow user to access to the internal logger.
@@ -157,7 +157,7 @@ public extension Postal {
 // MARK: - Fetchers
 
 public extension Postal {
-
+    
     /// Fetch a given number of last emails in a given folder
     ///
     /// - parameters: 
@@ -171,8 +171,8 @@ public extension Postal {
         assert(!folder.isEmpty, "folder parameter can't be empty")
         
         iterateAsync({ try self.session.fetchLast(folder, last: last, flags: flags, extraHeaders: extraHeaders, handler: $0) },
-            onItem: onMessage,
-            onComplete: onComplete)
+                     onItem: onMessage,
+                     onComplete: onComplete)
     }
     
     /// Fetch emails by uids in a given folder
@@ -186,12 +186,12 @@ public extension Postal {
     ///     - onComplete: The completion handler when the request is finished with or without an error.
     func fetchMessages(_ folder: String, uids: IndexSet, flags: FetchFlag, extraHeaders: Set<String> = [], onMessage: @escaping (FetchResult) -> Void, onComplete: @escaping (PostalError?) -> Void) {
         assert(!folder.isEmpty, "folder parameter can't be empty")
-
+        
         iterateAsync({ try self.session.fetchMessages(folder, set: .uid(uids), flags: flags, extraHeaders: extraHeaders, handler: $0) },
                      onItem: onMessage,
                      onComplete: onComplete)
     }
-
+    
     /// Fetch attachments of an email for a given partID in a given folder
     ///
     /// - parameters:
@@ -203,7 +203,7 @@ public extension Postal {
     func fetchAttachments(_ folder: String, uid: UInt, partId: String, onAttachment: @escaping (MailData) -> Void, onComplete: @escaping (PostalError?) -> Void) {
         assert(!folder.isEmpty, "folder parameter can't be empty")
         assert(!partId.isEmpty, "partId parameter can't be empty")
-
+        
         iterateAsync({ try self.session.fetchParts(folder, uid: uid, partId: partId, handler: $0) },
                      onItem: onAttachment,
                      onComplete: onComplete)
@@ -213,7 +213,7 @@ public extension Postal {
 // MARK: - Search
 
 public extension Postal {
-
+    
     /// Search emails for a given filter. Retrieve an indexset of uids.
     ///
     /// - parameters:
@@ -227,7 +227,7 @@ public extension Postal {
             try self.session.search(folder, filter: filter)
         }, completion: completion)
     }
-
+    
     /// Search emails for a given filter. Retrieve an indexset of uids.
     ///
     /// - parameters:
@@ -276,16 +276,28 @@ public extension Postal {
     }
     
     /// Delete messages from INBOX
-      ///
-      /// - parameters:
-      ///     - uids: The message uids to be deleted.
-      ///     - completion: The completion handler when the request is finished with or without an error.
-      func deleteMessages(uids: IndexSet, completion: @escaping (Result<Void, PostalError>) -> Void) {
-          doAsync({
-            try self.session.deleteMessages(uids: uids)
+    ///
+    /// - parameters:
+    ///     - uids: The message uids to be deleted.
+    ///     - completion: The completion handler when the request is finished with or without an error.
+    func deleteMessages(uids: IndexSet, completion: @escaping (Result<Void, PostalError>) -> Void) {
+        doAsync({
+            try self.session.flagMessages(uids: uids, flag: .deleted)
             try self.session.expunge()
-          }, completion: completion)
-      }
+        }, completion: completion)
+    }
+
+    /// Flag messages from INBOX
+    ///
+    /// - parameters:
+    ///     - uids: The message uids to be deleted.
+    ///     - flag: flag to apply
+    ///     - completion: The completion handler when the request is finished with or without an error.
+    func flagMessages(uids: IndexSet, flag: MessageFlag, completion: @escaping (Result<Void, PostalError>) -> Void) {
+        doAsync({
+            try self.session.flagMessages(uids: uids, flag: flag)
+        }, completion: completion)
+    }
     
 }
 
